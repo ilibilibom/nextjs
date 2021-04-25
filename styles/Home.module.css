@@ -50,6 +50,9 @@
   margin: 0;
   line-height: 1.15;
   font-size: 4rem;
+  background-color: #03c8ff;
+  color:#0e2b42;
+  padding:20px
 }
 
 .title,
