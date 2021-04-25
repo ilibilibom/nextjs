@@ -1,29 +1,47 @@
-import Title from './components/Title'
-import styles from '../styles/Home.module.css'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 
-function Home({props}) {
+function Home({is_abtest}) {
   const router = useRouter()
-  const {query:{v}} = router;
-  const backgroundColor = v === '1' ? "#03c8ff" : "#ffdf59";
+  // get initial props - graphql
+  // check if component props have the is_abtest=true
+  // check the headers to see if request has abtest_variant cookie
+  // if both are true load component 
+  // else don't load
+  // console.log('is_abtest',is_abtest);
+  const DynamicComponent = dynamic(() => {
+    const {query:{version}} = router;
+    if(version===1){
+      return import('./components/version1')
+      }
+      else {
+        return import('./components/version2')
+      }
+    }
+  )
+
   return (
-    <div className={styles.container}>
-        <Title 
-          backgroundColor={backgroundColor}
-          version={v}
-        />
+    <div>
+      <DynamicComponent />
     </div>
   )
 }
 
-// This gets called on every request
-export async function getServerSideProps(req) {
-  // Fetch data from external API
-  // const res = await fetch(`https://.../data`)
-  // const data = await res.json()
-
-  // Pass data to the page via props
-  return { props: { } }
+export const getStaticProps = async() => {
+  // const randomBoolean = Math.random() >= 0.5;
+  return ({
+    props: {
+      is_abtest:true
+    }
+  })
 }
 
-export default Home;
+// This function gets called at build time
+// export async function getStaticPaths() {
+//   return {paths: [
+//     { params: { id: '1' } },
+//     { params: { id: '2' } }
+//   ], fallback: false}
+// }
+
+export default Home
