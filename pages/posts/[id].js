@@ -11,7 +11,8 @@ function Blog({is_abtest}) {
       else {
         return import('../components/version2')
       }
-    }
+    },
+    { ssr:false }
   )
 
   return (
